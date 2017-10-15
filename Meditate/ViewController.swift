@@ -5,7 +5,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var circleView: UIView!
     @IBOutlet weak var rythmLabel: UILabel!
     
-    var timer: NSTimer!
+    var timer: Timer!
     var scale = CGFloat(1)
     var isInflating = true
     
@@ -17,7 +17,13 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     
-        timer = NSTimer.scheduledTimerWithTimeInterval(timerInterval, target: self, selector: #selector(timerCallback), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(
+            timeInterval: timerInterval,
+            target: self,
+            selector: #selector(timerCallback),
+            userInfo: nil,
+            repeats: true
+        )
         
         updateRhytmLabel()
     }
@@ -26,7 +32,7 @@ class ViewController: UIViewController {
         rythmLabel.text = "\(cyclesPerMinute) cycles/min"
     }
 
-    func timerCallback() {
+    @objc func timerCallback() {
         scale += isInflating ? speed : -speed
         
         if scale <= 0 {
@@ -37,7 +43,7 @@ class ViewController: UIViewController {
             isInflating = false
         }
         
-        circleView.transform = CGAffineTransformMakeScale(scale, scale)
+        circleView.transform = CGAffineTransform(scaleX: scale, y: scale)
     }
     
     override func viewDidLayoutSubviews() {
@@ -51,15 +57,15 @@ class ViewController: UIViewController {
     }
     
     @IBAction func panGestureCallback(sender: UIPanGestureRecognizer) {
-        let translation = sender.translationInView(view).x / view.bounds.width
+        let translation = sender.translation(in: view).x / view.bounds.width
         
         if translation > 0.25 {
             cyclesPerMinute += 0.25
-            sender.setTranslation(CGPoint.zero, inView: view)
+            sender.setTranslation(CGPoint.zero, in: view)
             updateRhytmLabel()
         } else if translation < -0.25 {
             cyclesPerMinute -= 0.25
-            sender.setTranslation(CGPoint.zero, inView: view)
+            sender.setTranslation(CGPoint.zero, in: view)
             updateRhytmLabel()
         }
     }
