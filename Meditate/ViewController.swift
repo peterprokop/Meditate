@@ -13,6 +13,8 @@ class ViewController: UIViewController {
     var cyclesPerMinute = CGFloat(5)
     var speed: CGFloat { return 0.02 / (60 / self.cyclesPerMinute / 2) }
     var firstLayout = true
+    var numCycles = 0
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +31,7 @@ class ViewController: UIViewController {
     }
     
     func updateRhytmLabel() {
-        rythmLabel.text = "\(cyclesPerMinute) cycles/min"
+        rythmLabel.text = "\(cyclesPerMinute) cycles/min\nNumber of cycles: \(numCycles)"
     }
 
     @objc func timerCallback() {
@@ -38,10 +40,12 @@ class ViewController: UIViewController {
         if scale <= 0 {
             scale = 0
             isInflating = true
+            numCycles += 1
         } else if scale >= 1 {
             scale = 1
             isInflating = false
         }
+        updateRhytmLabel()
         
         circleView.transform = CGAffineTransform(scaleX: scale, y: scale)
     }
